@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👑 King Under · Copa do Mundo 2026</title>
+<link rel="icon" href="public/favicon.ico" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+
+<div class="bg-wrap"></div>
+<div class="grid-lines"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <div class="logo-area">
+      <div class="trophy-icon">🏆</div>
+      <div class="logo-text">
+        <h1>KING UNDER</h1>
+        <p>Copa do Mundo 2026 · Probabilidades Under</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        AO VIVO
+      </div>
+      <div class="scan-badge" id="nextScanBadge">⏱ Aguardando...</div>
+    </div>
+  </div>
+  <div class="flags-strip">
+    <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span><span>🇪🇸</span>
+    <span>🇵🇹</span><span>🇮🇹</span><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>🇳🇱</span><span>🇧🇪</span>
+    <span>🇺🇸</span><span>🇲🇽</span><span>🇯🇵</span><span>🇰🇷</span><span>🇸🇦</span>
+    <span>🇲🇦</span><span>🇸🇳</span><span>🇨🇭</span><span>🇭🇷</span><span>🇵🇱</span>
+    <span>🇺🇾</span><span>🇨🇴</span><span>🇨🇱</span><span>🇪🇨</span><span>🇵🇪</span>
+    <span>🇦🇺</span><span>🇿🇦</span><span>🇹🇳</span><span>🇨🇲</span><span>🇬🇭</span>
+    <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span><span>🇪🇸</span>
+  </div>
+</header>
+
+<!-- CONFIG BAR -->
+<div class="config-bar">
+  <div class="cfg-group">
+    <span class="cfg-label">API KEY</span>
+    <input class="cfg-input" type="password" id="apiKey" placeholder="football-data.org key..." />
+  </div>
+  <div class="cfg-sep"></div>
+  <div class="cfg-group">
+    <span class="cfg-label">Gols mín</span>
+    <input class="cfg-input sm" type="number" id="minGoals" value="2" min="1" max="6" />
+  </div>
+  <div class="cfg-group">
+    <span class="cfg-label">Até min</span>
+    <input class="cfg-input sm" type="number" id="maxMinute" value="35" min="10" max="45" />
+  </div>
+  <div class="cfg-group">
+    <span class="cfg-label">Score mín</span>
+    <input class="cfg-input sm" type="number" id="minScore" value="60" min="0" max="99" />
+  </div>
+  <div class="cfg-sep"></div>
+  <button class="btn-start" id="btnStart" onclick="startAgent()">▶ INICIAR</button>
+  <button class="btn-stop"  id="btnStop"  onclick="stopAgent()" disabled>■ PARAR</button>
+  <button class="btn-sound" id="btnSound" onclick="toggleSound()">🔔 Som ON</button>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon">🔍</div>
+      <div class="stat-info">
+        <div class="val" id="statScans">0</div>
+        <div class="lbl">Varreduras</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⚽</div>
+      <div class="stat-info">
+        <div class="val" id="statGames">0</div>
+        <div class="lbl">Jogos Analisados</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🚨</div>
+      <div class="stat-info">
+        <div class="val" id="statAlerts">0</div>
+        <div class="lbl">Alertas Under</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📉</div>
+      <div class="stat-info">
+        <div class="val" id="statAvgScore">—</div>
+        <div class="lbl">Score Médio</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">
+      ⚽ JOGOS AO VIVO
+      <span class="count-pill" id="liveCount">0</span>
+    </div>
+    <div class="last-update" id="lastUpdate">—</div>
+  </div>
+
+  <div class="games-grid" id="gamesGrid">
+    <div class="empty-state">
+      <div class="empty-icon">🏆</div>
+      <div class="empty-title">Inicie o agente para monitorar</div>
+      <div class="empty-sub">Jogos ao vivo aparecerão aqui com probabilidades under</div>
+    </div>
+  </div>
+
+  <div class="log-card">
+    <div class="log-head">
+      <div class="section-title" style="font-size:16px;">📡 Log de Alertas</div>
+      <button class="btn-clear" onclick="clearLog()">Limpar</button>
+    </div>
+    <div id="progressWrap" class="progress-wrap" style="display:none;">
+      <div class="progress-label">
+        <span id="progressLabel">Iniciando...</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="log-body" id="logBody">
+      <div class="log-line">
+        <span class="log-time">--:--:--</span>
+        <span class="log-msg system">🏆 King Under Copa do Mundo pronto. Configure e inicie.</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  👑 KING UNDER · Copa do Mundo 2026 · Aposte com responsabilidade · Não é recomendação financeira
+</footer>
+
+<script src="src/data.js"></script>
+<script src="src/agent.js"></script>
+</body>
+</html>
