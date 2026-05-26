@@ -55,7 +55,7 @@ let scanCount    = 0;
 let gamesCount   = 0;
 let alertCount   = 0;
 let nextScanAt   = 0;
-const INTERVAL   = 60;
+const INTERVAL   = 550;
 const alertedSet = new Set();
 
 /* ── LIGAS DA BETFAIR ── */
